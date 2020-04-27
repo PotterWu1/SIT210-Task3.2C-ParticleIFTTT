@@ -1,0 +1,42 @@
+void setup() {}
+
+void loop() {
+  if (Particle.connected() == false) {
+    Particle.connect();
+  }
+}
+int counter = 10000;
+
+void doConnectedWork() {
+  digitalWrite(D7, HIGH);
+  Serial.println("Working online");
+}
+
+void doOfflineWork() {
+  digitalWrite(D7, LOW);
+  Serial.println("Working offline");
+}
+
+bool needConnection() {
+  --counter;
+  if (0 == counter)
+    counter = 10000;
+  return (2000 > counter);
+}
+
+void setup() {
+  pinMode(D7, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (needConnection()) {
+    if (!Particle.connected())
+      Particle.connect();
+    doConnectedWork();
+  } else {
+    if (Particle.connected())
+      Particle.disconnect();
+    doOfflineWork();
+  }
+}
